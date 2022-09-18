@@ -3,11 +3,11 @@
 /*    Module:       main.cpp                                                  */
 /*    Author:       Team7700                                                  */
 /*    Created:      Sat Sep 17 2022                                           */
-/*    Description:  V5 project                                                */
+/*    Description:  Competition Template                                      */
 /*                                                                            */
 /*    Changes Made:                                                           */
 /*                                                                            */
-/*    9/17/22 Abby made 6-motor Drive, inch drive, gyroturn                   */
+/*    9/17/22 Abby made 6-motor Drive, inch drive, gyroturn, auton select     */
 /*                                                                            */
 /*                                                                            */
 /*                                                                            */
@@ -24,6 +24,7 @@
 // RMDrive              motor         5               
 // RBDrive              motor         6               
 // Gyro                 inertial      7               
+// bumper               motor         8               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 //GUI:
@@ -37,6 +38,7 @@
 #include "vex.h"
 
 using namespace vex;
+competition Competition;
 
 float d = 4.0; //Global Wheel Diameter
 float pi = 3.1415926535897932384626;
@@ -105,6 +107,97 @@ void pre_auton(void) {
   
 }
 
+void brakeDrive(){
+  LFDrive.stop(brake);
+  LBDrive.stop(brake);
+  LMDrive.stop(brake);
+  RFDrive.stop(brake);
+  RBDrive.stop(brake);
+  RMDrive.stop(brake);
+}
+
+void inchDrive(float target, int speed){
+
+  float c = 0; //Current Location
+  
+  LBDrive.setRotation(0, degrees);
+  while (fabs(c) <= target) {
+    LFDrive.spin(forward, speed, pct);
+    LBDrive.spin(forward, speed, pct);
+    LMDrive.spin(forward, speed, pct);
+    RFDrive.spin(forward, speed, pct);
+    RBDrive.spin(forward, speed, pct);
+    RMDrive.spin(forward, speed, pct);
+    c = LBDrive.rotation(rev) * pi * d * g;
+  }
+  brakeDrive();
+}
+
+void Drive(int wt, int lspeed, int rspeed,
+           bool driveVolts = false) { // bool = optional var
+  if (driveVolts == true) {
+    lspeed*=120;
+    lspeed*=120;
+    LBDrive.spin(forward, lspeed , voltageUnits::mV);
+    LFDrive.spin(forward, lspeed , voltageUnits::mV);
+    RBDrive.spin(forward, rspeed , voltageUnits::mV);
+    RFDrive.spin(forward, rspeed , voltageUnits::mV);
+    RMDrive.spin(forward, rspeed, voltageUnits::mV);
+    LMDrive.spin(forward, rspeed, voltageUnits::mV);
+
+  } else {
+
+    LBDrive.spin(forward, lspeed, pct);
+    RBDrive.spin(forward, rspeed, pct);
+    LFDrive.spin(forward, lspeed, pct);
+    RFDrive.spin(forward, rspeed, pct);
+    RMDrive.spin(forward, rspeed, pct);
+    LMDrive.spin(forward, lspeed, pct);
+  }
+  wait(wt, msec);
+}
+
+void gyroTurn(float target) {
+  while (Gyro.isCalibrating()) {
+    // wait for Gyro Calibration , sleep but awwllow other tasks to run
+    //90 = right, -90 = left
+    this_thread::sleep_for(20);
+  }
+  float heading = 0;
+  Gyro.setRotation(0, degrees);
+
+  float speed = 0.0;
+  float kp = 1.0; //1
+  float d = 2.0;
+
+  Brain.Screen.clearScreen();
+  while (fabs(target - heading) >= d) {
+    if (target - heading > 0) {
+      speed = kp * (target - heading) + 10;
+    }
+    if (target - heading < 0) {
+      speed = kp * (target - heading) - 10;
+    }
+    //autonDriver(10, speed, -speed, false);;
+    Drive(10, speed, -speed);
+    heading = Gyro.rotation(degrees);
+    Brain.Screen.printAt(1, 40, "heading = %.3f", heading);
+  }
+  brakeDrive();
+  //Brain.Screen.clearScreen();
+}
+
+
+/////////////////////////////////////////////////////////////////////////EOF////////////////////////////////////////////////////////////////////
+
+void autonomous(){
+  switch (autonSelect) {
+
+    case 0: 
+  
+    break;
+  }
+}
 
 void usercontrol(void) {
   //Drive Code
@@ -127,6 +220,20 @@ void usercontrol(void) {
       RFDrive.spin(reverse, Controller1.Axis3.position(pct), pct);
       RMDrive.spin(reverse, Controller1.Axis3.position(pct), pct);
     }
+    //bump
+    if(Controller1.ButtonL2.pressing()){
+      scorem.spin(reverse);
+      
+    }
+    else if (!Controller1.ButtonB.pressing()) {
+      bDown = false;
+    }
+    if(tiltedUp){
+      Tilter.set(true);
+    }
+    else if(!tiltedUp){
+      Tilter.set(false);
+    }
 
 }
 
@@ -134,5 +241,10 @@ void usercontrol(void) {
 int main() {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
-  
+  Competition.autonomous(autonomous);
+  Competition.drivercontrol(usercontrol);
+  pre_auton();
+  while (true) {
+    wait(100, msec); 
+}
 }
