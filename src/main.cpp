@@ -8,7 +8,7 @@
 /*    Changes Made:                                                           */
 /*                                                                            */
 /*    9/17/22 Abby made 6-motor Drive, inch drive, gyroturn, auton select     */
-/*                                                                            */
+/*    9/18/22 Toggle, Adding wires for all the motor ports                    */
 /*                                                                            */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
@@ -24,7 +24,8 @@
 // RMDrive              motor         5               
 // RBDrive              motor         6               
 // Gyro                 inertial      7               
-// bumper               motor         8               
+// scorem               motor         8               
+// intake               motor         9               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 //GUI:
@@ -115,6 +116,14 @@ void brakeDrive(){
   RBDrive.stop(brake);
   RMDrive.stop(brake);
 }
+void setCoast(){
+  LFDrive.setBrake(coast);
+  LBDrive.setBrake(coast);
+  LMDrive.setBrake(coast);
+  RFDrive.setBrake(coast);
+  RBDrive.setBrake(coast);
+  RMDrive.setBrake(coast);
+}
 
 void inchDrive(float target, int speed){
 
@@ -186,6 +195,30 @@ void gyroTurn(float target) {
   brakeDrive();
   //Brain.Screen.clearScreen();
 }
+/*void gyroturn(double target, double accuracy = 1) { // idk maybe turns the robot with the gyro,so dont use the drive function use the gyro
+  double Kp = 1.1;
+  double Ki = 0.2;
+  double Kd = 1.25;
+	double decay = 0.5; // integral decay
+	
+  volatile double sum = 0;
+
+  volatile double speed;
+  volatile double error = target;
+  volatile double olderror = error;
+
+  target += Gyro.rotation(degrees);
+
+  while(fabs(error) > accuracy || fabs(speed) > 1) { //fabs = absolute value while loop again
+    error = target - Gyro.rotation(degrees);; //error gets smaller closer you get,robot slows down
+    sum = sum * decay + error; // some testing tells me that 0.5 is a good decay rate
+    speed = Kp * error + Ki * sum + Kd * (error - olderror); // big error go fast slow error go slow 
+    drive(speed, -speed, 10);
+    Brain.Screen.printAt(1, 60, "speed = %0.2f    degrees", speed);
+    olderror = error;
+  }
+}
+*/
 
 
 /////////////////////////////////////////////////////////////////////////EOF////////////////////////////////////////////////////////////////////
@@ -202,7 +235,12 @@ void autonomous(){
 void usercontrol(void) {
   //Drive Code
    bool reversed = false;
-  
+   bool toggle = false;
+   //bool tiltedUp = false;
+   //bool aDown = 0; //Variable for when you're trying to reverse
+   //bool bDown = 0; //Variable for when you're locking the drive
+   
+
 
     if(!reversed){
       LBDrive.spin(forward, Controller1.Axis3.position(pct), pct);
@@ -222,29 +260,47 @@ void usercontrol(void) {
     }
     //bump
     if(Controller1.ButtonL2.pressing()){
-      scorem.spin(reverse);
       
+      //sscorem = motor for the bending thing until hits bumper
+      scorem.spin(reverse, 60, pct);
+      wait(700, msec);
+      scorem.stop(); //stops when hits bumper
+      wait(200, msec);
+      scorem.spin(forward, 100, pct);
+
     }
-    else if (!Controller1.ButtonB.pressing()) {
-      bDown = false;
+    //Locking Drive
+    if (Controller1.ButtonX.pressing()){
+      setHold();
     }
-    if(tiltedUp){
-      Tilter.set(true);
-    }
-    else if(!tiltedUp){
-      Tilter.set(false);
+    if (Controller1.ButtonY.pressing()){
+      setCoast();
     }
 
+    if(Controller1.ButtonR1.pressing()){
+      if (!(toggle)){
+        toggle = true;}
+      else if (toggle){
+        toggle = false;}
+      while (Controller1.ButtonR1.pressing()){
+        wait(1, msec);}
+        if (toggle){
+          intake.spin(forward, 75, pct); }
+        else if (!(toggle)){
+          intake.stop();}
+}
 }
 
 
-int main() {
-  // Initializing Robot Configuration. DO NOT REMOVE!
+
+int main() {  // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
   pre_auton();
   while (true) {
     wait(100, msec); 
-}
-}
+  }
+}  
+
+  

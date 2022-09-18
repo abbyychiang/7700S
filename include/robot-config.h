@@ -12,6 +12,7 @@ extern motor RMDrive;
 extern motor RBDrive;
 extern inertial Gyro;
 extern motor scorem;
+extern motor intake;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
