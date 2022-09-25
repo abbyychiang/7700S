@@ -9,7 +9,7 @@
 /*                                                                            */
 /*    9/17/22 Abby made 6-motor Drive, inch drive, gyroturn, auton select     */
 /*    9/18/22 Toggle, Adding wires for all the motor ports                    */
-/*                                                                            */
+/*    9/25/22 Motors, auton, togggle                                          */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
@@ -271,7 +271,7 @@ void usercontrol(void) {
     }
     //Locking Drive
     if (Controller1.ButtonX.pressing()){
-      setHold();
+      //setHold(); 
     }
     if (Controller1.ButtonY.pressing()){
       setCoast();
