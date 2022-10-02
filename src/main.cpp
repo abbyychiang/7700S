@@ -17,15 +17,18 @@
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
 // Controller1          controller                    
-// LFDrive              motor         1               
-// LMDrive              motor         2               
+// LFDrive              motor         16              
+// LMDrive              motor         15              
 // LBDrive              motor         3               
-// RFDrive              motor         4               
-// RMDrive              motor         5               
-// RBDrive              motor         6               
-// Gyro                 inertial      7               
-// scorem               motor         8               
-// intake               motor         9               
+// RFDrive              motor         13              
+// RMDrive              motor         17              
+// RBDrive              motor         2               
+// Gyro                 inertial      20              
+// scorem               motor         21              
+// intake               motor         1               
+// BumperA              bumper        A               
+// backcamera           vision        5               
+// frontcamera          vision        10              
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 //GUI:
@@ -52,14 +55,14 @@ int autonMax = 8;
 void drawGUI() {
   // 2 buttons for selecting auto
   Brain.Screen.clearScreen();
-  Brain.Screen.printAt(1, 40, "Select Auton then Press Go");
-  Brain.Screen.printAt(1, 200, "Auton Selected =  %d   ", autonSelect);
+  Brain.Screen.printAt(1, 110, "Select Auton then Press Go");
+  Brain.Screen.printAt(1, 100, "Auton Selected =  %d   ", autonSelect);
   Brain.Screen.setFillColor(red);
-  Brain.Screen.drawRectangle(20, 50, 100, 100);
+  Brain.Screen.drawRectangle(20, 130, 100, 100);
   Brain.Screen.drawCircle(300, 75, 25);
   Brain.Screen.printAt(25, 75, "Select");
   Brain.Screen.setFillColor(green);
-  Brain.Screen.drawRectangle(170, 50, 100, 100);
+  Brain.Screen.drawRectangle(170, 130, 100, 100);
   Brain.Screen.printAt(175, 75, "GO");
   Brain.Screen.setFillColor(black);
 }
@@ -99,12 +102,12 @@ void pre_auton(void) {
   Brain.Screen.printAt(1, 40, "pre auton is running");
   drawGUI();
   Brain.Screen.pressed(selectAuton);
-  Brain.Screen.printAt(20, 20, "LF Temp %f ", LFDrive.temperature(pct));
-  Brain.Screen.printAt(20, 30, "LB Temp %f ", LBDrive.temperature(pct));
-  Brain.Screen.printAt(20, 40, "LU Temp %f ", LMDrive.temperature(pct));
-  Brain.Screen.printAt(20, 50, "RF Temp %f ", RFDrive.temperature(pct));
-  Brain.Screen.printAt(20, 60, "RB Temp % f", RBDrive.temperature(pct));
-  Brain.Screen.printAt(20, 70 , "RU Temp % f", RMDrive.temperature(pct));
+  Brain.Screen.printAt(10, 10, "LF Temp %f ", LFDrive.temperature(pct));
+  Brain.Screen.printAt(10, 20, "LB Temp %f ", LBDrive.temperature(pct));
+  Brain.Screen.printAt(10, 30, "LU Temp %f ", LMDrive.temperature(pct));
+  Brain.Screen.printAt(10, 40, "RF Temp %f ", RFDrive.temperature(pct));
+  Brain.Screen.printAt(10, 50, "RB Temp % f", RBDrive.temperature(pct));
+  Brain.Screen.printAt(10, 60 , "RU Temp % f", RMDrive.temperature(pct)); 
   
 }
 
@@ -166,7 +169,7 @@ void Drive(int wt, int lspeed, int rspeed,
   wait(wt, msec);
 }
 
-void gyroTurn(float target) {
+/*void gyroTurn(float target) {
   while (Gyro.isCalibrating()) {
     // wait for Gyro Calibration , sleep but awwllow other tasks to run
     //90 = right, -90 = left
@@ -195,7 +198,8 @@ void gyroTurn(float target) {
   brakeDrive();
   //Brain.Screen.clearScreen();
 }
-/*void gyroturn(double target, double accuracy = 1) { // idk maybe turns the robot with the gyro,so dont use the drive function use the gyro
+*/
+void gyroturn(double target, double accuracy = 1) { // idk maybe turns the robot with the gyro,so dont use the drive function use the gyro
   double Kp = 1.1;
   double Ki = 0.2;
   double Kd = 1.25;
@@ -213,12 +217,12 @@ void gyroTurn(float target) {
     error = target - Gyro.rotation(degrees);; //error gets smaller closer you get,robot slows down
     sum = sum * decay + error; // some testing tells me that 0.5 is a good decay rate
     speed = Kp * error + Ki * sum + Kd * (error - olderror); // big error go fast slow error go slow 
-    drive(speed, -speed, 10);
+    //drive(speed, -speed, 10);
     Brain.Screen.printAt(1, 60, "speed = %0.2f    degrees", speed);
     olderror = error;
   }
 }
-*/
+
 
 
 /////////////////////////////////////////////////////////////////////////EOF////////////////////////////////////////////////////////////////////
@@ -236,21 +240,13 @@ void usercontrol(void) {
   //Drive Code
    bool reversed = false;
    bool toggle = false;
+   bool bumper_pressed = true;
    //bool tiltedUp = false;
    //bool aDown = 0; //Variable for when you're trying to reverse
    //bool bDown = 0; //Variable for when you're locking the drive
-   
 
-
-    if(!reversed){
-      LBDrive.spin(forward, Controller1.Axis3.position(pct), pct);
-      LFDrive.spin(forward, Controller1.Axis3.position(pct), pct);
-      LMDrive.spin(forward, Controller1.Axis3.position(pct), pct);
-      RBDrive.spin(forward, Controller1.Axis2.position(pct), pct);
-      RFDrive.spin(forward, Controller1.Axis2.position(pct), pct);
-      RMDrive.spin(forward, Controller1.Axis2.position(pct), pct);
-    }
-    else if(reversed){
+while(true){
+    if(reversed){
       LBDrive.spin(reverse, Controller1.Axis2.position(pct), pct);
       LFDrive.spin(reverse, Controller1.Axis2.position(pct), pct);
       LMDrive.spin(reverse, Controller1.Axis2.position(pct), pct);
@@ -258,16 +254,34 @@ void usercontrol(void) {
       RFDrive.spin(reverse, Controller1.Axis3.position(pct), pct);
       RMDrive.spin(reverse, Controller1.Axis3.position(pct), pct);
     }
+    else if(!reversed){
+      LBDrive.spin(forward, Controller1.Axis3.position(pct), pct);
+      LFDrive.spin(forward, Controller1.Axis3.position(pct), pct);
+      LMDrive.spin(forward, Controller1.Axis3.position(pct), pct);
+      RBDrive.spin(forward, Controller1.Axis2.position(pct), pct);
+      RFDrive.spin(forward, Controller1.Axis2.position(pct), pct);
+      RMDrive.spin(forward, Controller1.Axis2.position(pct), pct);
+    }
     //bump
-    if(Controller1.ButtonL2.pressing()){
-      
+    
+    while(Controller1.ButtonL1.pressing()){
+      bumper_pressed = false;
       //sscorem = motor for the bending thing until hits bumper
-      scorem.spin(reverse, 60, pct);
-      wait(700, msec);
-      scorem.stop(); //stops when hits bumper
-      wait(200, msec);
-      scorem.spin(forward, 100, pct);
+      if(BumperA.pressing()){
+        bumper_pressed = false;
+        scorem.spin(reverse, 0, pct);
+        //scorem.spinFor(reverse, 2000, msec);
+        bumper_pressed = true;
+        scorem.stop(brake); //stops when hits bumper
+       
+      } 
+      else{scorem.spin(reverse, 100, pct);
+      }
+    }
 
+    while(Controller1.ButtonL2.pressing()){
+
+       scorem.spin(reverse, 100, pct);
     }
     //Locking Drive
     if (Controller1.ButtonX.pressing()){
@@ -288,7 +302,7 @@ void usercontrol(void) {
           intake.spin(forward, 75, pct); }
         else if (!(toggle)){
           intake.stop();}
-}
+}}
 }
 
 
