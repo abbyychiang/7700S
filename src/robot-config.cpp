@@ -25,6 +25,7 @@ vision backcamera = vision (PORT5, 50);
 vision frontcamera = vision (PORT10, 50);
 /*vex-vision-config:end*/
 distance DistanceSensor = distance(PORT6);
+optical Color = optical(PORT7);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

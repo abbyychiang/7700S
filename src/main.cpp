@@ -29,6 +29,7 @@
 // backcamera           vision        5               
 // frontcamera          vision        10              
 // DistanceSensor       distance      6               
+// Color                optical       7               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 //GUI:
@@ -94,6 +95,8 @@ void selectAuton() {
   wait(10, msec); // slow it down
   Brain.Screen.setFillColor(black);
 }
+bool intakeOn = false;
+void toggleIntake() {intakeOn = !intakeOn;}
 
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
@@ -331,6 +334,27 @@ while(true){
     if (Controller1.ButtonY.pressing()){
       setCoast();
     }
+    if (intakeOn){
+      intake.spin(forward,130, rpm);
+    }
+    if (!intakeOn){
+
+      if (Color.color() == red && Color.isNearObject()){
+      }
+        else{
+          intake.stop();
+        }
+      }
+      Color.setLightPower(100);
+      if (Color.isNearObject()){
+        Color.setLight(ledState::on);
+    
+      }
+      if (!Color.isNearObject()) {
+        Color.setLight(ledState::off);
+      }
+     
+    }
 //int distance=DistanceSensor.objectDistance(mm);
     if(Controller1.ButtonR1.pressing()){
       if (!(toggle)){
@@ -344,7 +368,7 @@ while(true){
         else if (!(toggle)){
           intake.stop();}
 }}
-}
+
 
 
 

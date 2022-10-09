@@ -32,6 +32,7 @@ extern signature frontcamera__SIG_6;
 extern signature frontcamera__SIG_7;
 extern vision frontcamera;
 extern distance DistanceSensor;
+extern optical Color;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
