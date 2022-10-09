@@ -26,9 +26,9 @@
 // Gyro                 inertial      20              
 // scorem               motor         21              
 // intake               motor         1               
-// BumperA              bumper        A               
 // backcamera           vision        5               
 // frontcamera          vision        10              
+// DistanceSensor       distance      6               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 //GUI:
@@ -44,18 +44,18 @@
 using namespace vex;
 competition Competition;
 
-float d = 4.0; //Global Wheel Diameter
+float d = 3.25; //Global Wheel Diameter
 float pi = 3.1415926535897932384626;
 float g = 7/5;
 
-int autonSelect = 7 ; //Default
+int autonSelect = 0 ; //Default
 int autonMin = 0;
 int autonMax = 8;
 
 void drawGUI() {
   // 2 buttons for selecting auto
   Brain.Screen.clearScreen();
-  Brain.Screen.printAt(1, 110, "Select Auton then Press Go");
+  Brain.Screen.printAt(1, 120, "Select Auton then Press Go");
   Brain.Screen.printAt(1, 100, "Auton Selected =  %d   ", autonSelect);
   Brain.Screen.setFillColor(red);
   Brain.Screen.drawRectangle(20, 130, 100, 100);
@@ -97,6 +97,7 @@ void selectAuton() {
 
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
+  float bruh = DistanceSensor.objectDistance(mm);
   Gyro.calibrate();
   vexcodeInit();
   Brain.Screen.printAt(1, 40, "pre auton is running");
@@ -106,8 +107,9 @@ void pre_auton(void) {
   Brain.Screen.printAt(10, 20, "LB Temp %f ", LBDrive.temperature(pct));
   Brain.Screen.printAt(10, 30, "LU Temp %f ", LMDrive.temperature(pct));
   Brain.Screen.printAt(10, 40, "RF Temp %f ", RFDrive.temperature(pct));
-  Brain.Screen.printAt(10, 50, "RB Temp % f", RBDrive.temperature(pct));
-  Brain.Screen.printAt(10, 60 , "RU Temp % f", RMDrive.temperature(pct)); 
+  Brain.Screen.printAt(10, 50, "RB Temp %f", RBDrive.temperature(pct));
+  Brain.Screen.printAt(10, 60 , "RU Temp %f", RMDrive.temperature(pct)); 
+  Brain.Screen.printAt(200, 100, "Distance Sensor = %f  ", bruh);
   
 }
 
@@ -169,7 +171,7 @@ void Drive(int wt, int lspeed, int rspeed,
   wait(wt, msec);
 }
 
-/*void gyroTurn(float target) {
+void gyroTurn(float target) {
   while (Gyro.isCalibrating()) {
     // wait for Gyro Calibration , sleep but awwllow other tasks to run
     //90 = right, -90 = left
@@ -180,7 +182,7 @@ void Drive(int wt, int lspeed, int rspeed,
 
   float speed = 0.0;
   float kp = 1.0; //1
-  float d = 2.0;
+  float d = 3.25;
 
   Brain.Screen.clearScreen();
   while (fabs(target - heading) >= d) {
@@ -193,13 +195,27 @@ void Drive(int wt, int lspeed, int rspeed,
     //autonDriver(10, speed, -speed, false);;
     Drive(10, speed, -speed);
     heading = Gyro.rotation(degrees);
-    Brain.Screen.printAt(1, 40, "heading = %.3f", heading);
+    Brain.Screen.printAt(100, 100, "heading = %.3f", heading);
   }
   brakeDrive();
   //Brain.Screen.clearScreen();
 }
-*/
-void gyroturn(double target, double accuracy = 1) { // idk maybe turns the robot with the gyro,so dont use the drive function use the gyro
+
+void pullbackShoot(){
+  while(DistanceSensor.objectDistance(mm)>52){
+    
+    scorem.spin(forward, 50, pct);
+    wait(10 , msec);
+    }
+  scorem.stop(brake);
+}
+void shootBack(){
+  scorem.spin(forward, 50, pct);
+  wait(10, msec);
+ // scorem.stop(brake); 
+  }
+  
+/*void gyroturn(double target, double accuracy = 1) { // idk maybe turns the robot with the gyro,so dont use the drive function use the gyro
   double Kp = 1.1;
   double Ki = 0.2;
   double Kd = 1.25;
@@ -222,6 +238,7 @@ void gyroturn(double target, double accuracy = 1) { // idk maybe turns the robot
     olderror = error;
   }
 }
+*/
 
 
 
@@ -230,7 +247,11 @@ void gyroturn(double target, double accuracy = 1) { // idk maybe turns the robot
 void autonomous(){
   switch (autonSelect) {
 
-    case 0: 
+    case 0:
+   
+    gyroTurn(80);
+    wait(1000, msec);
+    gyroTurn(-80);
   
     break;
   }
@@ -240,12 +261,14 @@ void usercontrol(void) {
   //Drive Code
    bool reversed = false;
    bool toggle = false;
-   bool bumper_pressed = true;
    //bool tiltedUp = false;
    //bool aDown = 0; //Variable for when you're trying to reverse
    //bool bDown = 0; //Variable for when you're locking the drive
-
+   Controller1.ButtonL1.pressed(pullbackShoot);
+   Controller1.ButtonL2.pressed(shootBack);
+   
 while(true){
+  
     if(reversed){
       LBDrive.spin(reverse, Controller1.Axis2.position(pct), pct);
       LFDrive.spin(reverse, Controller1.Axis2.position(pct), pct);
@@ -263,16 +286,32 @@ while(true){
       RMDrive.spin(forward, Controller1.Axis2.position(pct), pct);
     }
     //bump
+    /*double error = targetAngle - turretG.orientation(yaw, degrees);
+    while fabs(error > accuracy){
+      error = targetAngle - turretG.orientation(yaw, degrees);
+      turret.spin(fwd, (error * kp)+ (ki*sum)+(kd *(error - prevError)),
+      percent
+      wait(10, msec)
+      prevError = error;
+      ifBumperA.pressing() || BumperA.pressing()){
+        turret.stop()
+        break;
+      }
+    }
+    if fabs(error)< accuracy){
+      turret.stop()
+    }
+    return 0;
+    */
+   
     
-    while(Controller1.ButtonL1.pressing()){
-      bumper_pressed = false;
+    /*while(Controller1.ButtonL1.pressing()){
+      
       //sscorem = motor for the bending thing until hits bumper
       if(BumperA.pressing()){
-        bumper_pressed = false;
         scorem.spin(reverse, 0, pct);
         //scorem.spinFor(reverse, 2000, msec);
-        bumper_pressed = true;
-        scorem.stop(brake); //stops when hits bumper
+       scorem.stop(brake); //stops when hits bumper
        
       } 
       else{scorem.spin(reverse, 100, pct);
@@ -283,14 +322,16 @@ while(true){
 
        scorem.spin(reverse, 100, pct);
     }
+    */
     //Locking Drive
+    
     if (Controller1.ButtonX.pressing()){
       //setHold(); 
     }
     if (Controller1.ButtonY.pressing()){
       setCoast();
     }
-
+//int distance=DistanceSensor.objectDistance(mm);
     if(Controller1.ButtonR1.pressing()){
       if (!(toggle)){
         toggle = true;}
@@ -299,7 +340,7 @@ while(true){
       while (Controller1.ButtonR1.pressing()){
         wait(1, msec);}
         if (toggle){
-          intake.spin(forward, 75, pct); }
+          intake.spin(forward, 90, pct); }
         else if (!(toggle)){
           intake.stop();}
 }}
