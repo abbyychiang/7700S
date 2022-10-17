@@ -16,16 +16,14 @@ motor RFDrive = motor(PORT13, ratio6_1, false);
 motor RMDrive = motor(PORT17, ratio6_1, true);
 motor RBDrive = motor(PORT2, ratio6_1, false);
 inertial Gyro = inertial(PORT20);
-motor scorem = motor(PORT21, ratio36_1, false);
-motor intake = motor(PORT1, ratio18_1, false);
-/*vex-vision-config:begin*/
-vision backcamera = vision (PORT5, 50);
-/*vex-vision-config:end*/
+motor scorem = motor(PORT21, ratio36_1, true);
+motor intake = motor(PORT1, ratio6_1, false);
 /*vex-vision-config:begin*/
 vision frontcamera = vision (PORT10, 50);
 /*vex-vision-config:end*/
 distance DistanceSensor = distance(PORT6);
 optical Color = optical(PORT7);
+limit LimitSwitchA = limit(Brain.ThreeWirePort.A);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

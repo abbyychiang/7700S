@@ -10,7 +10,7 @@
 /*    9/17/22 Abby made 6-motor Drive, inch drive, gyroturn, auton select     */
 /*    9/18/22 Toggle, Adding wires for all the motor ports                    */
 /*    9/25/22 Motors, auton, togggle                                          */
-/*                                                                            */
+/*    10/9/22 Color                                                           */
 /*----------------------------------------------------------------------------*/
 
 // ---- START VEXCODE CONFIGURED DEVICES ----
@@ -26,10 +26,10 @@
 // Gyro                 inertial      20              
 // scorem               motor         21              
 // intake               motor         1               
-// backcamera           vision        5               
 // frontcamera          vision        10              
 // DistanceSensor       distance      6               
 // Color                optical       7               
+// LimitSwitchA         limit         A               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 //GUI:
@@ -52,6 +52,8 @@ float g = 7/5;
 int autonSelect = 0 ; //Default
 int autonMin = 0;
 int autonMax = 8;
+
+bool shootFlag = true;
 
 void drawGUI() {
   // 2 buttons for selecting auto
@@ -204,20 +206,43 @@ void gyroTurn(float target) {
   //Brain.Screen.clearScreen();
 }
 
-void pullbackShoot(){
-  while(DistanceSensor.objectDistance(mm)>52){
+/* void pullbackShoot(){
+  while(DistanceSensor.objectDistance(mm)>56){
     
-    scorem.spin(forward, 50, pct);
+    scorem.spin(forward, 70, pct);
     wait(10 , msec);
     }
   scorem.stop(brake);
 }
 void shootBack(){
-  scorem.spin(forward, 50, pct);
+  scorem.spin(forward, 70, pct);
   wait(10, msec);
  // scorem.stop(brake); 
-  }
+  } */
+  void pullbackShoot(){
+    shootFlag = !shootFlag;
+
+ while(!LimitSwitchA.pressing()&& !shootFlag){
+   scorem.spin(forward, 70, pct);
+   wait(10, msec);
+   }
+   while(LimitSwitchA.pressing()&& shootFlag){
+   scorem.spin(forward, 70, pct);
+   wait(10, msec);
+   }
+   scorem.stop(brake);    
   
+  }
+ 
+
+void shootBack(){
+  
+  scorem.spin(forward, 70, pct);
+  wait(10, msec);
+  scorem.stop(brake);
+ // scorem.stop(brake); 
+  }
+
 /*void gyroturn(double target, double accuracy = 1) { // idk maybe turns the robot with the gyro,so dont use the drive function use the gyro
   double Kp = 1.1;
   double Ki = 0.2;
@@ -267,8 +292,8 @@ void usercontrol(void) {
    //bool tiltedUp = false;
    //bool aDown = 0; //Variable for when you're trying to reverse
    //bool bDown = 0; //Variable for when you're locking the drive
-   Controller1.ButtonL1.pressed(pullbackShoot);
-   Controller1.ButtonL2.pressed(shootBack);
+   //Controller1.ButtonL1.pressed(pullbackShoot);
+   //Controller1.ButtonL2.pressed(shootBack);
    
 while(true){
   
@@ -328,13 +353,15 @@ while(true){
     */
     //Locking Drive
     
+Controller1.ButtonL1.pressed(pullbackShoot);
+//Controller1.ButtonL2.pressed(shootBack);
     if (Controller1.ButtonX.pressing()){
       //setHold(); 
     }
     if (Controller1.ButtonY.pressing()){
       setCoast();
     }
-    if (intakeOn){
+    /* if (intakeOn){
       intake.spin(forward,130, rpm);
     }
     if (!intakeOn){
@@ -353,10 +380,9 @@ while(true){
       if (!Color.isNearObject()) {
         Color.setLight(ledState::off);
       }
-     
-    }
-//int distance=DistanceSensor.objectDistance(mm);
-    if(Controller1.ButtonR1.pressing()){
+     */
+    
+     if(Controller1.ButtonR1.pressing()){
       if (!(toggle)){
         toggle = true;}
       else if (toggle){
@@ -364,10 +390,15 @@ while(true){
       while (Controller1.ButtonR1.pressing()){
         wait(1, msec);}
         if (toggle){
-          intake.spin(forward, 90, pct); }
+          intake.spin(forward, 50, pct); }
         else if (!(toggle)){
           intake.stop();}
-}}
+}
+    
+    
+    } 
+//int distance=DistanceSensor.objectDistance(mm);
+   }
 
 
 
