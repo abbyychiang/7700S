@@ -34,7 +34,8 @@
 
 //GUI:
 /* 
-   Case 1:
+   Case 0: Team Auton red two rollers
+   Case 1: Team Auton one roller
    Case 2:
    Case 3:
 
@@ -133,6 +134,7 @@ void setCoast(){
   RFDrive.setBrake(coast);
   RBDrive.setBrake(coast);
   RMDrive.setBrake(coast);
+  scorem.setBrake(coast);
 }
 
 void inchDrive(float target, int speed){
@@ -222,16 +224,16 @@ void shootBack(){
   void pullbackShoot(){
     shootFlag = !shootFlag;
 
- while(!LimitSwitchA.pressing()&& !shootFlag){
+ while(!LimitSwitchA.pressing()&& shootFlag){
    scorem.spin(forward, 70, pct);
    wait(10, msec);
    }
-   while(LimitSwitchA.pressing()&& shootFlag){
+   while(LimitSwitchA.pressing()&& !shootFlag){
    scorem.spin(forward, 70, pct);
    wait(10, msec);
    }
    scorem.stop(brake);    
-  
+   
   }
  
 
@@ -273,15 +275,64 @@ void shootBack(){
 /////////////////////////////////////////////////////////////////////////EOF////////////////////////////////////////////////////////////////////
 
 void autonomous(){
+      setCoast();
   switch (autonSelect) {
+  //-90 turns left, 90 turns right
 
-    case 0:
-   
-    gyroTurn(80);
+    case 0: //team auton// red // two rollers //no intake  
+    /*
+    
+     gyroTurn(-55);
+     wait(800, msec);
+     gyroTurn(56);
+     */
+    inchDrive(2, -50);
+    intake.spin(reverse, 100, pct);
+    wait(30, msec);
+    gyroTurn(26);
+    wait(800, msec);
+    inchDrive(110, 75);
+    wait(500, msec);
+    gyroTurn(-60);
+    wait(800, msec);
+    inchDrive(6, 75);
+    pullbackShoot();
+    
     wait(1000, msec);
-    gyroTurn(-80);
-  
+    inchDrive(5, -75);
+    gyroTurn(-58);
+    pullbackShoot();
+    wait(800, msec);
+    inchDrive(110, -75);
+   
+    inchDrive(5, -100);
+    wait(600, msec);
+    gyroTurn(28);
+
+    wait(500, msec);
+   
+    inchDrive(10, -50);
+    wait(100, msec);
+    intake.stop();
+    inchDrive(2, 75);
+
+    
     break;
+
+    case 1:
+    inchDrive(2, -50);
+    intake.spin(reverse, 100, pct);
+    wait(30, msec);
+    gyroTurn(26);
+    wait(800, msec);
+    inchDrive(110, 75);
+    wait(500, msec);
+    gyroTurn(-60);
+    wait(800, msec);
+    inchDrive(4, 75);
+    pullbackShoot();
+    break;
+
   }
 }
 
@@ -296,7 +347,8 @@ void usercontrol(void) {
    //Controller1.ButtonL2.pressed(shootBack);
    
 while(true){
-  
+        setCoast();
+
     if(reversed){
       LBDrive.spin(reverse, Controller1.Axis2.position(pct), pct);
       LFDrive.spin(reverse, Controller1.Axis2.position(pct), pct);
@@ -359,7 +411,6 @@ Controller1.ButtonL1.pressed(pullbackShoot);
       //setHold(); 
     }
     if (Controller1.ButtonY.pressing()){
-      setCoast();
     }
     /* if (intakeOn){
       intake.spin(forward,130, rpm);
@@ -394,6 +445,22 @@ Controller1.ButtonL1.pressed(pullbackShoot);
         else if (!(toggle)){
           intake.stop();}
 }
+
+
+
+
+  if(Controller1.ButtonR2.pressing()){
+      if (!(toggle)){
+        toggle = true;}
+      else if (toggle){
+        toggle = false;}
+      while (Controller1.ButtonR2.pressing()){
+        wait(1, msec);}
+        if (toggle){
+          intake.spin(reverse, 50, pct); }
+        else if (!(toggle)){
+          intake.stop();}
+} 
     
     
     } 
