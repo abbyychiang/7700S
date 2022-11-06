@@ -280,41 +280,38 @@ void autonomous(){
   //-90 turns left, 90 turns right
 
     case 0: //team auton// red // two rollers //no intake  
-    /*
-    
-     gyroTurn(-55);
-     wait(800, msec);
-     gyroTurn(56);
-     */
+  
     inchDrive(2, -50);
     intake.spin(reverse, 100, pct);
     wait(30, msec);
-    gyroTurn(26);
+    inchDrive(1,100);
+    gyroTurn(32);
     wait(800, msec);
     inchDrive(110, 75);
     wait(500, msec);
-    gyroTurn(-60);
+    gyroTurn(-62);
     wait(800, msec);
-    inchDrive(6, 75);
+    inchDrive(5,100);
     pullbackShoot();
+    wait(800, msec);
+   inchDrive(5,-100);
+
     
+    //solo winpoint
     wait(1000, msec);
-    inchDrive(5, -75);
     gyroTurn(-58);
     pullbackShoot();
     wait(800, msec);
-    inchDrive(110, -75);
+    inchDrive(109, -75);
    
-    inchDrive(5, -100);
-    wait(600, msec);
+ 
     gyroTurn(28);
 
     wait(500, msec);
    
-    inchDrive(10, -50);
-    wait(100, msec);
+    inchDrive(4, -30);
+    wait(80, msec);
     intake.stop();
-    inchDrive(2, 75);
 
     
     break;
@@ -323,13 +320,13 @@ void autonomous(){
     inchDrive(2, -50);
     intake.spin(reverse, 100, pct);
     wait(30, msec);
-    gyroTurn(26);
+    gyroTurn(28);
     wait(800, msec);
     inchDrive(110, 75);
     wait(500, msec);
-    gyroTurn(-60);
+    gyroTurn(-56);
     wait(800, msec);
-    inchDrive(4, 75);
+    inchDrive(5, 75);
     pullbackShoot();
     break;
 
