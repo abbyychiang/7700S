@@ -23,7 +23,6 @@ extern signature frontcamera__SIG_5;
 extern signature frontcamera__SIG_6;
 extern signature frontcamera__SIG_7;
 extern vision frontcamera;
-extern distance DistanceSensor;
 extern optical Color;
 extern limit LimitSwitchA;
 

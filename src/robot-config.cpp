@@ -21,8 +21,7 @@ motor intake = motor(PORT1, ratio6_1, false);
 /*vex-vision-config:begin*/
 vision frontcamera = vision (PORT10, 50);
 /*vex-vision-config:end*/
-distance DistanceSensor = distance(PORT6);
-optical Color = optical(PORT7);
+optical Color = optical(PORT4);
 limit LimitSwitchA = limit(Brain.ThreeWirePort.A);
 
 // VEXcode generated functions

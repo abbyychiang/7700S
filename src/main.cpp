@@ -27,8 +27,7 @@
 // scorem               motor         21              
 // intake               motor         1               
 // frontcamera          vision        10              
-// DistanceSensor       distance      6               
-// Color                optical       7               
+// Color                optical       4               
 // LimitSwitchA         limit         A               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
@@ -49,6 +48,7 @@ competition Competition;
 float d = 3.25; //Global Wheel Diameter
 float pi = 3.1415926535897932384626;
 float g = 7/5;
+
 
 int autonSelect = 0 ; //Default
 int autonMin = 0;
@@ -103,9 +103,10 @@ void toggleIntake() {intakeOn = !intakeOn;}
 
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
-  float bruh = DistanceSensor.objectDistance(mm);
+ // float bruh = DistanceSensor.objectDistance(mm);
   Gyro.calibrate();
   vexcodeInit();
+ // Color.setLightPower(100);
   Brain.Screen.printAt(1, 40, "pre auton is running");
   drawGUI();
   Brain.Screen.pressed(selectAuton);
@@ -115,7 +116,7 @@ void pre_auton(void) {
   Brain.Screen.printAt(10, 40, "RF Temp %f ", RFDrive.temperature(pct));
   Brain.Screen.printAt(10, 50, "RB Temp %f", RBDrive.temperature(pct));
   Brain.Screen.printAt(10, 60 , "RU Temp %f", RMDrive.temperature(pct)); 
-  Brain.Screen.printAt(200, 100, "Distance Sensor = %f  ", bruh);
+  //Brain.Screen.printAt(200, 100, "Distance Sensor = %f  ", bruh);
   
 }
 
@@ -177,6 +178,8 @@ void Drive(int wt, int lspeed, int rspeed,
   }
   wait(wt, msec);
 }
+
+
 
 void gyroTurn(float target) {
   while (Gyro.isCalibrating()) {
@@ -269,9 +272,33 @@ void shootBack(){
   }
 }
 */
+void DN(){
+  bool roll = true;
+  while (roll){
+  
+ Color.setLightPower(100);
+ if (Color.isNearObject()){
+   Color.setLight(ledState::on);
+ }
+
+ if (!Color.isNearObject()){
+   Color.setLight(ledState::on);
+ }
+ if (Color.color() == blue && Color.isNearObject()){
+   intake.spin(fwd,200,rpm); 
+   wait(1000, msec);  
+ } else{
+     intake.stop();
+     roll=false;
+      }
+    }
+}
 
 
 
+
+
+    
 /////////////////////////////////////////////////////////////////////////EOF////////////////////////////////////////////////////////////////////
 
 void autonomous(){
@@ -291,10 +318,10 @@ void autonomous(){
     wait(500, msec);
     gyroTurn(-62);
     wait(800, msec);
-    inchDrive(5,100);
+    inchDrive(4,100);
     pullbackShoot();
     wait(800, msec);
-   inchDrive(5,-100);
+   inchDrive(4,-100);
 
     
     //solo winpoint
@@ -404,32 +431,14 @@ while(true){
     
 Controller1.ButtonL1.pressed(pullbackShoot);
 //Controller1.ButtonL2.pressed(shootBack);
-    if (Controller1.ButtonX.pressing()){
-      //setHold(); 
-    }
+Controller1.ButtonUp.pressed(DN);
+  
     if (Controller1.ButtonY.pressing()){
-    }
-    /* if (intakeOn){
-      intake.spin(forward,130, rpm);
-    }
-    if (!intakeOn){
 
-      if (Color.color() == red && Color.isNearObject()){
-      }
-        else{
-          intake.stop();
-        }
-      }
-      Color.setLightPower(100);
-      if (Color.isNearObject()){
-        Color.setLight(ledState::on);
-    
-      }
-      if (!Color.isNearObject()) {
-        Color.setLight(ledState::off);
-      }
-     */
-    
+    }
+  
+      Color.setLightPower(100); 
+      
      if(Controller1.ButtonR1.pressing()){
       if (!(toggle)){
         toggle = true;}
@@ -442,6 +451,7 @@ Controller1.ButtonL1.pressed(pullbackShoot);
         else if (!(toggle)){
           intake.stop();}
 }
+
 
 
 
