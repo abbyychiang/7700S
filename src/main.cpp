@@ -35,7 +35,7 @@
 /* 
    Case 0: Team Auton red two rollers
    Case 1: Team Auton one roller
-   Case 2:
+   Case 2: Auton Skills
    Case 3:
 
 */
@@ -50,7 +50,7 @@ float pi = 3.1415926535897932384626;
 float g = 7/5;
 
 
-int autonSelect = 0 ; //Default
+int autonSelect = 2 ; //Default
 int autonMin = 0;
 int autonMax = 8;
 
@@ -285,7 +285,7 @@ void DN(){
    Color.setLight(ledState::on);
  }
  if (Color.color() == blue && Color.isNearObject()){
-   intake.spin(fwd,200,rpm); 
+   intake.spin(fwd,400,rpm); 
    wait(1000, msec);  
  } else{
      intake.stop();
@@ -309,8 +309,9 @@ void autonomous(){
     case 0: //team auton// red // two rollers //no intake  
   
     inchDrive(2, -50);
+    
     intake.spin(reverse, 100, pct);
-    wait(30, msec);
+    wait(80, msec);
     inchDrive(1,100);
     gyroTurn(32);
     wait(800, msec);
@@ -326,7 +327,7 @@ void autonomous(){
     
     //solo winpoint
     wait(1000, msec);
-    gyroTurn(-58);
+    gyroTurn(-63); //58
     pullbackShoot();
     wait(800, msec);
     inchDrive(109, -75);
@@ -345,8 +346,10 @@ void autonomous(){
 
     case 1:
     inchDrive(2, -50);
+    
     intake.spin(reverse, 100, pct);
-    wait(30, msec);
+  
+    wait(80, msec);
     gyroTurn(28);
     wait(800, msec);
     inchDrive(110, 75);
@@ -356,6 +359,35 @@ void autonomous(){
     inchDrive(5, 75);
     pullbackShoot();
     break;
+
+
+    case 2:
+    inchDrive(2, -50);
+    
+    DN();
+  
+    wait(90, msec);
+    wait(50, msec);
+    
+  
+    inchDrive(30, 75);
+
+    wait(200, msec);
+    gyroTurn(60);
+    wait(200, msec);
+    inchDrive(39, -60);
+    wait(200, msec);
+    DN();
+    wait(90, msec);
+    wait(50, msec);
+    inchDrive(5, 75);
+    wait(100, msec);
+    gyroTurn(-59);
+    wait(100, msec);
+    inchDrive(86, 75);
+    pullbackShoot();
+    break;
+
 
   }
 }
