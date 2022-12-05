@@ -11,6 +11,7 @@
 /*    9/18/22 Toggle, Adding wires for all the motor ports                    */
 /*    9/25/22 Motors, auton, togggle                                          */
 /*    10/9/22 Color                                                           */
+/*    12/3/22 case 2 skills                                                   */
 /*----------------------------------------------------------------------------*/
 
 // ---- START VEXCODE CONFIGURED DEVICES ----
@@ -106,8 +107,8 @@ void pre_auton(void) {
  // float bruh = DistanceSensor.objectDistance(mm);
   Gyro.calibrate();
   vexcodeInit();
- // Color.setLightPower(100);
-  Brain.Screen.printAt(1, 40, "pre auton is running");
+  Color.setLightPower(100);
+ Brain.Screen.printAt(1, 40, "pre auton is running");
   drawGUI();
   Brain.Screen.pressed(selectAuton);
   Brain.Screen.printAt(10, 10, "LF Temp %f ", LFDrive.temperature(pct));
@@ -361,31 +362,76 @@ void autonomous(){
     break;
 
 
+
     case 2:
+     //90 = right, -90 = left
     inchDrive(2, -50);
+    wait(200, msec);
+    intake.spin(fwd, 300,rpm); 
+    wait(200, msec);
     
-    DN();
-  
-    wait(90, msec);
-    wait(50, msec);
-    
-  
-    inchDrive(30, 75);
+    inchDrive(35, 50);
 
     wait(200, msec);
-    gyroTurn(60);
+    gyroTurn(-45);
     wait(200, msec);
-    inchDrive(39, -60);
+    inchDrive(34, -50);
+    wait(300, msec);
+    intake.stop();
+    wait(100, msec);
+    intake.spin(fwd, 200,rpm); 
+    wait(10, msec);
+    inchDrive(10,50);
+    wait(100, msec);
+    /*
+    gyroTurn(8);
+    wait(100, msec);
+    inchDrive(8,75);
+    gyroTurn(-8);
+    wait(100, msec);
+    intake.spin(fwd, 400,rpm); 
+
+    inchDrive(20, 75);
+    wait(100 ,msec);
+    intake.stop();
+    */
+
+    gyroTurn(-30);
+    wait(100, msec);
+    inchDrive(30, 50);
     wait(200, msec);
-    DN();
-    wait(90, msec);
-    wait(50, msec);
-    inchDrive(5, 75);
+    gyroTurn(25);
     wait(100, msec);
-    gyroTurn(-59);
-    wait(100, msec);
-    inchDrive(86, 75);
+    inchDrive(80, 50);
+    wait(100 , msec);
+   
     pullbackShoot();
+    wait(1000, msec);
+    inchDrive(58, -50);
+    wait(200, msec);
+    gyroTurn(28);
+    wait(100, msec);
+    intake.spin(fwd, 400,rpm); 
+    wait(100, msec);
+    inchDrive(90, 50);
+    wait(100 , msec);
+    gyroTurn(-68);
+    //pullbackshooot
+    pullbackShoot();
+    wait(1000 , msec);
+    gyroTurn(-50);
+    
+
+/*    wait(100, msec);
+    inchDrive(11, 75);
+    pullbackShoot();
+    //after second shot
+    gyroTurn(60); //turning to adjust
+    wait(100, msec);
+    inchDrive(50, -75);
+    wait(100, msec);
+    */
+    inchDrive(40, -75);
     break;
 
 
