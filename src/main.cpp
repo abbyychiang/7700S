@@ -370,68 +370,76 @@ void autonomous(){
     intake.spin(fwd, 300,rpm); 
     wait(200, msec);
     
-    inchDrive(35, 50);
+    inchDrive(30, 60);
 
     wait(200, msec);
-    gyroTurn(-45);
+    gyroTurn(-55);
     wait(200, msec);
-    inchDrive(34, -50);
-    wait(300, msec);
+    inchDrive(34, -50); //34
+    wait(250, msec);
     intake.stop();
     wait(100, msec);
     intake.spin(fwd, 200,rpm); 
     wait(10, msec);
-    inchDrive(10,50);
+    inchDrive(50,60);
     wait(100, msec);
-    /*
-    gyroTurn(8);
+    
+    gyroTurn(-25);
     wait(100, msec);
-    inchDrive(8,75);
-    gyroTurn(-8);
-    wait(100, msec);
-    intake.spin(fwd, 400,rpm); 
-
-    inchDrive(20, 75);
-    wait(100 ,msec);
-    intake.stop();
-    */
-
-    gyroTurn(-30);
+    inchDrive(34,50);
+    wait(200, msec);
+    gyroTurn(20);
     wait(100, msec);
     inchDrive(30, 50);
-    wait(200, msec);
-    gyroTurn(25);
+    wait(300 , msec);
+
+    gyroTurn(9);
+    
     wait(100, msec);
-    inchDrive(80, 50);
-    wait(100 , msec);
-   
-    pullbackShoot();
+    //pullbackShoot();
     wait(1000, msec);
-    inchDrive(58, -50);
+
+    gyroTurn(-5);//turning back
+    wait(500, msec);
+    inchDrive(55, -50);
     wait(200, msec);
-    gyroTurn(28);
+    gyroTurn(30);
     wait(100, msec);
     intake.spin(fwd, 400,rpm); 
     wait(100, msec);
-    inchDrive(90, 50);
-    wait(100 , msec);
-    gyroTurn(-68);
-    //pullbackshooot
-    pullbackShoot();
-    wait(1000 , msec);
-    gyroTurn(-50);
+    inchDrive(92, 70);
     
+    
+    wait(100 , msec);
+    gyroTurn(-65);
+   
+   // pullbackShoot();
+    wait(1000 , msec);
+    intake.stop();
+    gyroTurn(-68);
+    wait(100, msec);
+    inchDrive(117, -60);
+    wait(100, msec);
 
-/*    wait(100, msec);
-    inchDrive(11, 75);
-    pullbackShoot();
-    //after second shot
-    gyroTurn(60); //turning to adjust
+    //turning to face
+    gyroTurn(-30);
     wait(100, msec);
-    inchDrive(50, -75);
+    inchDrive(15, -50);
     wait(100, msec);
-    */
-    inchDrive(40, -75);
+    intake.spin(fwd, 200,rpm); 
+
+    wait(500, msec);
+    inchDrive(38, 60);
+
+    wait(200, msec);
+    gyroTurn(58);
+    wait(200, msec);
+    inchDrive(38, -50);
+    wait(100, msec);
+    intake.spin(fwd, 200,rpm); 
+    //2nd roller
+
+    
     break;
 
 
