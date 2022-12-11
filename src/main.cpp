@@ -30,7 +30,7 @@
 // Color                optical       4               
 // LimitSwitchA         limit         A               
 // gyro2                inertial      10              
-// numa                 digital_out   D               
+// numa                 digital_out   C               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 //GUI:
@@ -52,7 +52,7 @@ float pi = 3.1415926535897932384626;
 float g = 7/5;
 
 
-int autonSelect = 2 ; //Default
+int autonSelect = 1 ; //Default
 int autonMin = 0;
 int autonMax = 8;
 
@@ -110,7 +110,8 @@ void pre_auton(void) {
   Gyro.calibrate();
   vexcodeInit();
   Color.setLightPower(100);
- Brain.Screen.printAt(1, 40, "pre auton is running");
+  numa.set(false);
+  Brain.Screen.printAt(1, 40, "pre auton is running");
   drawGUI();
   Brain.Screen.pressed(selectAuton);
   Brain.Screen.printAt(10, 10, "LF Temp %f ", LFDrive.temperature(pct));
@@ -121,6 +122,8 @@ void pre_auton(void) {
   Brain.Screen.printAt(10, 60 , "RU Temp %f", RMDrive.temperature(pct)); 
   //Brain.Screen.printAt(200, 100, "Distance Sensor = %f  ", bruh);
   
+  
+
 }
 
 void brakeDrive(){
@@ -246,6 +249,7 @@ void shootBack(){
 if (limitToggle == true){
       scorem.stop();
   }
+  
 }
 
 
@@ -408,7 +412,7 @@ void autonomous(){
     wait(1000, msec); //Waiting to Align
 
 
-    gyroTurn(-5); //turning back
+    gyroTurn(-7); //turning back
     wait(500, msec);
 
 
@@ -464,6 +468,7 @@ void autonomous(){
 
 void usercontrol(void) {
   //Drive Code
+  
    bool reversed = false;
    bool toggle = false;
   
@@ -562,10 +567,9 @@ Controller1.ButtonUp.pressed(CS);
 if (Controller1.ButtonA.pressing()){
   numa.set(true);
   }
-  if (Controller1.ButtonB.pressing()){
+  else{
     numa.set(false);
     }
-    wait(20, msec);
   }
 
 

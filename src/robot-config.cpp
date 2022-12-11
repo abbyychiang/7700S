@@ -21,7 +21,7 @@ motor intake = motor(PORT1, ratio6_1, false);
 optical Color = optical(PORT4);
 limit LimitSwitchA = limit(Brain.ThreeWirePort.A);
 inertial gyro2 = inertial(PORT10);
-digital_out numa = digital_out(Brain.ThreeWirePort.D);
+digital_out numa = digital_out(Brain.ThreeWirePort.C);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable
