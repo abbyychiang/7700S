@@ -52,7 +52,7 @@ float pi = 3.1415926535897932384626;
 float g = 7/5;
 
 
-int autonSelect = 1 ; //Default
+int autonSelect = 2 ; //Default
 int autonMin = 0;
 int autonMax = 8;
 
@@ -246,10 +246,22 @@ void shootBack(){
    }
    scorem.stop(brake);  
 
+
 if (limitToggle == true){
       scorem.stop();
   }
   
+}
+
+
+void overide(){
+  
+  scorem.spin(forward, 70, pct);
+   wait(2000, msec);
+   
+  scorem.stop();
+
+
 }
 
 
@@ -360,17 +372,23 @@ void autonomous(){
     case 1:
     inchDrive(2, -50);
     
-    intake.spin(reverse, 200, pct);
+    wait(200, msec);
+    intake.spin(fwd, 400,rpm); 
+    wait(200, msec);
   
-    wait(80, msec);
-    gyroTurn(28);
-    wait(800, msec);
-    inchDrive(110, 75);
+    //wait(300, msec);
+    inchDrive(5, 30);
     wait(500, msec);
-    gyroTurn(-56);
+    gyroTurn(23);
     wait(800, msec);
-    inchDrive(5, 75);
-    pullbackShoot();
+    inchDrive(117, 30);
+    wait(500, msec);
+    gyroTurn(-57); //56
+    wait(800, msec);
+    inchDrive(6, 80);
+    overide();
+    
+    //pullbackShoot();
     break;
 
     case 2:
@@ -381,74 +399,77 @@ void autonomous(){
     intake.spin(fwd, 300,rpm); //Adjustable Speed
     wait(200, msec); // After First Roller
     
-    inchDrive(30, 60);
+    inchDrive(33, 60);
+    intake.stop();
     wait(200, msec);
     gyroTurn(-55);
     wait(200, msec);
     inchDrive(34, -50);
     wait(250, msec);
-    intake.stop(); //Not intaking extra disk
-    wait(100, msec);
-    intake.spin(fwd, 200,rpm); //Adjustable Speed
-    wait(10, msec); //After Second Roller
+     //Not intaking extra disk
+    wait(200, msec);
+    intake.spin(fwd, 400,rpm); //Adjustable Speed
+    wait(200, msec); //After Second Roller
     inchDrive(50, 60);
     wait(100, msec);
   
-    gyroTurn(-25);  //Turning to Align
+    gyroTurn(-30);  //Turning to Align
     wait(100, msec);
     inchDrive(34, 50);
     wait(200, msec);
-    gyroTurn(20);
+    gyroTurn(15);
     wait(100, msec);
-    inchDrive(30, 50); //Reaching Shooting Area
+    inchDrive(34, 50); //Reaching Shooting Area
     wait(300 , msec);
 
 
-    gyroTurn(9);
+    gyroTurn(5);
 
     wait(100, msec);
    
-    pullbackShoot(); //Shooting 3rd intaked disk
+    overide(); //Shooting 3rd intaked disk
     wait(1000, msec); //Waiting to Align
 
 
-    gyroTurn(-7); //turning back
+    gyroTurn(-3); //turning back
     wait(500, msec);
 
 
     inchDrive(55, -50); 
     wait(200, msec);
-    gyroTurn(30);
+    gyroTurn(25);
     wait(100, msec);
     intake.spin(fwd, 400,rpm); //Intaking 3 disks
     wait(100, msec);
 
-    inchDrive(92, 70);
+    inchDrive(92, 50);
     wait(100 , msec);
-    gyroTurn(-65); //Turning to Face
+    gyroTurn(-58); //Turning to Face //65
 
     wait(1000, msec);
+    overide();
+    wait(500, msec);
 
     intake.stop();
-    gyroTurn(-68);
+    gyroTurn(-64);
     wait(100, msec);
-    inchDrive(117, -60);
+    inchDrive(120, -30);
     wait(100, msec);
 
 
     //turning to face
 
-    gyroTurn(-30);
+    gyroTurn(-20);
     wait(100, msec);
-    inchDrive(15, -50);
+    inchDrive(2, -50);
     wait(100, msec);
     intake.spin(fwd, 200, rpm);
 
-    wait(500, msec);
+    wait(200, msec);
     inchDrive(38, 60);   
 
     wait(200, msec);
-    gyroTurn(58);
+    gyroTurn(40);
     wait(200, msec);
     inchDrive(38, -50);
     wait(100, msec);
@@ -542,6 +563,10 @@ while(true){
 Controller1.ButtonL1.pressed(pullbackShoot);
 //Controller1.ButtonL2.pressed(shootBack);
 Controller1.ButtonUp.pressed(CS);
+if(Controller1.ButtonL2.pressing()){
+  scorem.spin(forward, 70, pct);
+   wait(10, msec);
+}
   
     if (Controller1.ButtonY.pressing()){
 
