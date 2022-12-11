@@ -27,9 +27,10 @@
 // Gyro                 inertial      20              
 // scorem               motor         21              
 // intake               motor         1               
-// frontcamera          vision        10              
 // Color                optical       4               
 // LimitSwitchA         limit         A               
+// gyro2                inertial      10              
+// numa                 digital_out   D               
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 //GUI:
@@ -56,6 +57,7 @@ int autonMin = 0;
 int autonMax = 8;
 
 bool shootFlag = true;
+bool limitToggle = true;
 
 void drawGUI() {
   // 2 buttons for selecting auto
@@ -184,7 +186,7 @@ void Drive(int wt, int lspeed, int rspeed,
 
 void gyroTurn(float target) {
   while (Gyro.isCalibrating()) {
-    // wait for Gyro Calibration , sleep but awwllow other tasks to run
+    // wait for Gyro Calibration , sleep but allow other tasks to run
     //90 = right, -90 = left
     this_thread::sleep_for(20);
   }
@@ -225,8 +227,11 @@ void shootBack(){
   wait(10, msec);
  // scorem.stop(brake); 
   } */
+
+
   void pullbackShoot(){
     shootFlag = !shootFlag;
+    limitToggle = !limitToggle;
 
  while(!LimitSwitchA.pressing()&& shootFlag){
    scorem.spin(forward, 70, pct);
@@ -236,10 +241,14 @@ void shootBack(){
    scorem.spin(forward, 70, pct);
    wait(10, msec);
    }
-   scorem.stop(brake);    
-   
+   scorem.stop(brake);  
+
+if (limitToggle == true){
+      scorem.stop();
   }
- 
+}
+
+
 
 void shootBack(){
   
@@ -248,8 +257,8 @@ void shootBack(){
   scorem.stop(brake);
  // scorem.stop(brake); 
   }
-
-/*void gyroturn(double target, double accuracy = 1) { // idk maybe turns the robot with the gyro,so dont use the drive function use the gyro
+/*
+void gyroturn(double target, double accuracy = 1) { 
   double Kp = 1.1;
   double Ki = 0.2;
   double Kd = 1.25;
@@ -263,17 +272,17 @@ void shootBack(){
 
   target += Gyro.rotation(degrees);
 
-  while(fabs(error) > accuracy || fabs(speed) > 1) { //fabs = absolute value while loop again
-    error = target - Gyro.rotation(degrees);; //error gets smaller closer you get,robot slows down
-    sum = sum * decay + error; // some testing tells me that 0.5 is a good decay rate
-    speed = Kp * error + Ki * sum + Kd * (error - olderror); // big error go fast slow error go slow 
+  while(fabs(error) > accuracy || fabs(speed) > 1) { //Fabs = Absolute Value While Loop 
+    error = target - Gyro.rotation(degrees);; //Error gets Smaller Closer, for more Precise
+    sum = sum * decay + error; //  0.5 = decay rate
+    speed = Kp * error + Ki * sum + Kd * (error - olderror); // Bigger Error = Go Fast | Smaller Error = Go slow 
     //drive(speed, -speed, 10);
     Brain.Screen.printAt(1, 60, "speed = %0.2f    degrees", speed);
     olderror = error;
   }
 }
 */
-void DN(){
+void CS(){
   bool roll = true;
   while (roll){
   
@@ -311,7 +320,7 @@ void autonomous(){
   
     inchDrive(2, -50);
     
-    intake.spin(reverse, 100, pct);
+    intake.spin(reverse, 200, pct);
     wait(80, msec);
     inchDrive(1,100);
     gyroTurn(32);
@@ -323,8 +332,7 @@ void autonomous(){
     inchDrive(4,100);
     pullbackShoot();
     wait(800, msec);
-   inchDrive(4,-100);
-
+    inchDrive(4,-100);
     
     //solo winpoint
     wait(1000, msec);
@@ -348,7 +356,7 @@ void autonomous(){
     case 1:
     inchDrive(2, -50);
     
-    intake.spin(reverse, 100, pct);
+    intake.spin(reverse, 200, pct);
   
     wait(80, msec);
     gyroTurn(28);
@@ -361,77 +369,93 @@ void autonomous(){
     pullbackShoot();
     break;
 
-
-
     case 2:
-     //90 = right, -90 = left
+    // A = DOWN
+    //B = UP
     inchDrive(2, -50);
     wait(200, msec);
-    intake.spin(fwd, 300,rpm); 
-    wait(200, msec);
+    intake.spin(fwd, 300,rpm); //Adjustable Speed
+    wait(200, msec); // After First Roller
     
-    inchDrive(35, 50);
-
+    inchDrive(30, 60);
     wait(200, msec);
-    gyroTurn(-45);
+    gyroTurn(-55);
     wait(200, msec);
     inchDrive(34, -50);
-    wait(300, msec);
-    intake.stop();
+    wait(250, msec);
+    intake.stop(); //Not intaking extra disk
     wait(100, msec);
-    intake.spin(fwd, 200,rpm); 
-    wait(10, msec);
-    inchDrive(10,50);
+    intake.spin(fwd, 200,rpm); //Adjustable Speed
+    wait(10, msec); //After Second Roller
+    inchDrive(50, 60);
     wait(100, msec);
-    /*
-    gyroTurn(8);
+  
+    gyroTurn(-25);  //Turning to Align
     wait(100, msec);
-    inchDrive(8,75);
-    gyroTurn(-8);
+    inchDrive(34, 50);
+    wait(200, msec);
+    gyroTurn(20);
     wait(100, msec);
-    intake.spin(fwd, 400,rpm); 
+    inchDrive(30, 50); //Reaching Shooting Area
+    wait(300 , msec);
 
-    inchDrive(20, 75);
-    wait(100 ,msec);
+
+    gyroTurn(9);
+
+    wait(100, msec);
+   
+    pullbackShoot(); //Shooting 3rd intaked disk
+    wait(1000, msec); //Waiting to Align
+
+
+    gyroTurn(-5); //turning back
+    wait(500, msec);
+
+
+    inchDrive(55, -50); 
+    wait(200, msec);
+    gyroTurn(30);
+    wait(100, msec);
+    intake.spin(fwd, 400,rpm); //Intaking 3 disks
+    wait(100, msec);
+
+    inchDrive(92, 70);
+    wait(100 , msec);
+    gyroTurn(-65); //Turning to Face
+
+    wait(1000, msec);
+
     intake.stop();
-    */
+    gyroTurn(-68);
+    wait(100, msec);
+    inchDrive(117, -60);
+    wait(100, msec);
+
+
+    //turning to face
 
     gyroTurn(-30);
     wait(100, msec);
-    inchDrive(30, 50);
-    wait(200, msec);
-    gyroTurn(25);
+    inchDrive(15, -50);
     wait(100, msec);
-    inchDrive(80, 50);
-    wait(100 , msec);
-   
-    pullbackShoot();
-    wait(1000, msec);
-    inchDrive(58, -50);
-    wait(200, msec);
-    gyroTurn(28);
-    wait(100, msec);
-    intake.spin(fwd, 400,rpm); 
-    wait(100, msec);
-    inchDrive(90, 50);
-    wait(100 , msec);
-    gyroTurn(-68);
-    //pullbackshooot
-    pullbackShoot();
-    wait(1000 , msec);
-    gyroTurn(-50);
-    
+    intake.spin(fwd, 200, rpm);
 
-/*    wait(100, msec);
-    inchDrive(11, 75);
-    pullbackShoot();
-    //after second shot
-    gyroTurn(60); //turning to adjust
+    wait(500, msec);
+    inchDrive(38, 60);   
+
+    wait(200, msec);
+    gyroTurn(58);
+    wait(200, msec);
+    inchDrive(38, -50);
     wait(100, msec);
-    inchDrive(50, -75);
-    wait(100, msec);
-    */
-    inchDrive(40, -75);
+    intake.spin(fwd, 200, rpm);
+    //2nd roller
+    
+    // A = DOWN
+    //B = UP
+    wait(500, msec);
+    numa.set(false);
+    
     break;
 
 
@@ -442,6 +466,8 @@ void usercontrol(void) {
   //Drive Code
    bool reversed = false;
    bool toggle = false;
+  
+   
    //bool tiltedUp = false;
    //bool aDown = 0; //Variable for when you're trying to reverse
    //bool bDown = 0; //Variable for when you're locking the drive
@@ -506,10 +532,11 @@ while(true){
     }
     */
     //Locking Drive
+
     
 Controller1.ButtonL1.pressed(pullbackShoot);
 //Controller1.ButtonL2.pressed(shootBack);
-Controller1.ButtonUp.pressed(DN);
+Controller1.ButtonUp.pressed(CS);
   
     if (Controller1.ButtonY.pressing()){
 
@@ -525,13 +552,21 @@ Controller1.ButtonUp.pressed(DN);
       while (Controller1.ButtonR1.pressing()){
         wait(1, msec);}
         if (toggle){
-          intake.spin(forward, 50, pct); }
+          intake.spin(forward, 80, pct); }
         else if (!(toggle)){
           intake.stop();}
 }
 
 
 
+if (Controller1.ButtonA.pressing()){
+  numa.set(true);
+  }
+  if (Controller1.ButtonB.pressing()){
+    numa.set(false);
+    }
+    wait(20, msec);
+  }
 
 
   if(Controller1.ButtonR2.pressing()){
@@ -542,7 +577,7 @@ Controller1.ButtonUp.pressed(DN);
       while (Controller1.ButtonR2.pressing()){
         wait(1, msec);}
         if (toggle){
-          intake.spin(reverse, 50, pct); }
+          intake.spin(reverse, 80, pct); }
         else if (!(toggle)){
           intake.stop();}
 } 
@@ -550,13 +585,17 @@ Controller1.ButtonUp.pressed(DN);
     
     } 
 //int distance=DistanceSensor.objectDistance(mm);
-   }
-
-
-
+   
+/*
+bool open = false;
+bool close = true;
+*/
+//pneumatics numa = pneumatics(Brain.ThreeWirePort.D);
 
 int main() {  // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
+  
+
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
   pre_auton();

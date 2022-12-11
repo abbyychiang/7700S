@@ -2,8 +2,6 @@ using namespace vex;
 
 extern brain Brain;
 
-using signature = vision::signature;
-
 // VEXcode devices
 extern controller Controller1;
 extern motor LFDrive;
@@ -15,16 +13,10 @@ extern motor RBDrive;
 extern inertial Gyro;
 extern motor scorem;
 extern motor intake;
-extern signature frontcamera__SIG_1;
-extern signature frontcamera__SIG_2;
-extern signature frontcamera__SIG_3;
-extern signature frontcamera__SIG_4;
-extern signature frontcamera__SIG_5;
-extern signature frontcamera__SIG_6;
-extern signature frontcamera__SIG_7;
-extern vision frontcamera;
 extern optical Color;
 extern limit LimitSwitchA;
+extern inertial gyro2;
+extern digital_out numa;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
